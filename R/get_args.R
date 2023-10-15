@@ -21,7 +21,7 @@ get_args <- function() {
     miniUI::miniContentPanel(
 
       # first panel part: title, author, date, subtitle
-      shiny::fillRow(height = "100px",
+      shiny::fillRow(height = "80px",
             flex = c(NA,2,1),
             shiny::textInput(
               inputId = "title",
@@ -41,9 +41,15 @@ get_args <- function() {
             ),
 
       ),
-
+      shiny::fillRow(height = "50px",
+        shiny::radioButtons(
+            inputId = "filename_style",
+            label = "Filename style",
+            choices = c("Same as title" = "title", "index.qmd" = "index"),
+            inline = TRUE
+        )),
       # subtitle
-      shiny::fillRow(height = "70px",
+      shiny::fillRow(height = "50px",
         shiny::textInput(
             inputId = "subtitle",
             label = "Subtitle",
@@ -138,7 +144,13 @@ get_args <- function() {
                 "posts/", input$date, "-",
                 title_kebab(input$title)
             )
-            new_post_file <- paste0(slug, "/", "index.qmd")
+            print(input$filename_style)
+            if(input$filename_style == "index"){
+                new_post_file <- paste0(slug, "/", "index.qmd")
+            } else {
+                new_post_file <- paste0(slug, "/", title_kebab(input$title), ".qmd")
+            }
+            # new_post_file <- paste0(slug, "/", "index.qmd")
             if (title_exists <- file.exists(new_post_file)) {
                 shinyFeedback::feedbackDanger("title", show = TRUE, "File already exists, rename it")
                 shiny::req(!title_exists)
