@@ -27,11 +27,11 @@ quartopost <- function() {
   )
 
   draft <- ifelse(is.null(getOption("quartopost.draft")),
-                    TRUE, getOption("quartopost.draft")
+                    FALSE, getOption("quartopost.draft")
   )
 
   show_empty_fields <- ifelse(is.null(getOption("quartopost.show_empty_fields")),
-                           TRUE, getOption("quartopost.show_empty_fields")
+                           FALSE, getOption("quartopost.show_empty_fields")
   )
   ##############################################################
 

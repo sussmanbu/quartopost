@@ -144,7 +144,6 @@ get_args <- function() {
                 "posts/", input$date, "-",
                 title_kebab(input$title)
             )
-            print(input$filename_style)
             if(input$filename_style == "index"){
                 new_post_file <- paste0(slug, "/", "index.qmd")
             } else {
