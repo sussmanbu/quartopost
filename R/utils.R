@@ -9,17 +9,16 @@ title_kebab <- function(title) {
     stringr::str_replace_all(" ", "-")
 }
 
-
 # wrap description at 77 characters (are URLs allowed?)
 long_yaml_text <- function(txt) {
   stringr::str_wrap(txt, width = 77) |>
     stringr::str_replace_all("[\n]", "\n  ")
 }
 
-
 # formatting for long or empty description
 prepare_description <- function(txt) {
-  ifelse(txt != "",
+  ifelse(
+    txt != "",
     paste0("description:  |\n  ", long_yaml_text(txt)),
     'description: ""'
   )
@@ -42,13 +41,12 @@ prepare_categories <- function(cat, new) {
     stringr::str_flatten(collapse = ", ")
 }
 
-
 # build YAML
-prepare_yaml <- function(args, desc,
-                         img_name, cats, draft, fields) {
+prepare_yaml <- function(args, desc, img_name, cats, draft, fields) {
   # if show_empty_fields == TRUE
   if (fields) {
-      paste(c(
+    paste(
+      c(
         "---",
         glue::glue('title: "{args$file_data$title}"'),
         glue::glue('subtitle: "{args$subtitle}"'),
@@ -62,32 +60,40 @@ prepare_yaml <- function(args, desc,
         glue::glue('date-modified: "{args$date}"'),
         glue::glue("draft: {draft}"),
         "---\n"
-      ), collapse = "\n")
+      ),
+      collapse = "\n"
+    )
     # if show_empty_fields == FALSE
   } else {
-      paste(c(
-          "---",
-          glue::glue('title: "{args$file_data$title}"'),
-          if (args$subtitle != "") {
-            glue::glue('subtitle: "{args$subtitle}"')},
-          if (args$desc != "") {
-            glue::glue("{desc}")},
-          glue::glue('author: "{args$author}"'),
-          glue::glue('date: "{args$date}"'),
-          if (img_name != "") {
-            glue::glue('image: "{img_name}"')
-            glue::glue('image-alt: "{args$alt}"')},
-          if (cats != "") {
-            glue::glue("categories: [{cats}]")},
-          # date-modified starts always with date choice
-          if (args$date) {
-            glue::glue('date-modified: "{args$date}"')},
-          glue::glue("draft: {draft}"),
-          "---\n"
-      ), collapse = "\n")
-
+    paste(
+      c(
+        "---",
+        glue::glue('title: "{args$file_data$title}"'),
+        if (args$subtitle != "") {
+          glue::glue('subtitle: "{args$subtitle}"')
+        },
+        if (args$desc != "") {
+          glue::glue("{desc}")
+        },
+        glue::glue('author: "{args$author}"'),
+        glue::glue('date: "{args$date}"'),
+        if (img_name != "") {
+          glue::glue('image: "{img_name}"')
+          glue::glue('image-alt: "{args$alt}"')
+        },
+        if (cats != "") {
+          glue::glue("categories: [{cats}]")
+        },
+        # date-modified starts always with date choice
+        if (args$date) {
+          glue::glue('date-modified: "{args$date}"')
+        },
+        glue::glue("draft: {draft}"),
+        "---\n"
+      ),
+      collapse = "\n"
+    )
   }
-
 }
 
 # extract categories from yaml with square brackets
@@ -113,7 +119,6 @@ extract_cat_dashes <- function(f) {
     stringi::stri_omit_empty("")
 }
 
-
 # collect categories
 get_cat <- function() {
   f_list <- list()
@@ -136,20 +141,21 @@ get_cat <- function() {
   # read file contents into list variable
   for (i in 1:length(fp)) {
     f_list[i] <- readr::read_file(fp[i]) |>
-      stringr::str_extract(stringr::regex("^---[\\s\\S]*?^---\\n", multiline = TRUE))
+      stringr::str_extract(
+        stringr::regex("^---[\\s\\S]*?^---\\n", multiline = TRUE)
+      )
   }
 
   # extract yaml content
   for (i in 1:length(f_list)) {
-    if (stringr::str_detect(f_list[[i]], "categories:")) {
-      if (stringr::str_detect(f_list[[i]], "categories:\\s*\\[")) { # bracket notation
+    if (any(stringr::str_detect(f_list[[i]], "categories:"))) {
+      if (any(stringr::str_detect(f_list[[i]], "categories:\\s*\\["))) {
+        # bracket notation
         cat_vec <- c(cat_vec, extract_cat_brackets(f_list[[i]]))
       } else {
-        cat_vec <- c(cat_vec, extract_cat_dashes(f_list[[i]]))  # dash notation
+        cat_vec <- c(cat_vec, extract_cat_dashes(f_list[[i]])) # dash notation
       }
     }
   }
   return(unique(cat_vec))
 }
-
-

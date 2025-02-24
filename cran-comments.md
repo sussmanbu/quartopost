@@ -1,4 +1,4 @@
-Maintainer: ‘Peter Baumgartner <petzi53@gmail.com>’
+Maintainer: ‘Peter Baumgartner <petzi53@*.r*.com>’
 
 ## R CMD check results
 
